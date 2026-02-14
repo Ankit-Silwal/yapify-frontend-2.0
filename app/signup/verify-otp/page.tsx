@@ -1,5 +1,5 @@
 "use client"
-import OtpForm from "@/components/otp-form"
+import { OtpForm } from "@/components/otp-form"
 
 export default function Page() {
   return (

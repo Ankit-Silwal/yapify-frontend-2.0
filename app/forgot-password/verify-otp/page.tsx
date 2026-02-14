@@ -15,7 +15,7 @@ export default function Page() {
            resendEndpoint="/auth/resend-forgot-password-otp"
            redirectPath="" // We handle manually below
            onSuccess={(email, otp) => {
-               router.push(`/forgot-password/reset?email=${encodeURIComponent(email)}&otp=${otp}`);
+               router.push(`/forgot-password/reset?otp=${otp}`);
            }}
         />
       </div>

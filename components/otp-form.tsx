@@ -1,7 +1,7 @@
 "use client";
 
 import { REGEXP_ONLY_DIGITS } from "input-otp";
-import { useState, useEffect, Suspense } from "react";
+import { useState, Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import api from "@/lib/api";
@@ -38,10 +38,16 @@ function OtpFormContent({
   redirectPath,
   onSuccess,
   ...props
-}: OtpFormProps) {
+}: Readonly<OtpFormProps>) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const email = searchParams.get("email") || "";
+  const [email, setEmail] = useState("");
+
+  useEffect(() => {
+    const emailFromParams = searchParams.get("email");
+    const emailFromStorage = sessionStorage.getItem("verification_email");
+    setEmail(emailFromParams || emailFromStorage || "");
+  }, [searchParams]);
   
   const [otp, setOtp] = useState("");
   const [error, setError] = useState("");
@@ -95,16 +101,16 @@ function OtpFormContent({
     try {
       const response = await api.post(resendEndpoint, { email });
       if (response.data.success || response.status === 200) {
-        setSucce) {
+        setSuccessMsg(response.data.message || "OTP resent successfully!");
+      } else {
+        setError(response.data.message || "Failed to resend OTP");
+      }
+    } catch (err) {
       let message = "Failed to resend OTP";
       if (isAxiosError(err)) {
         message = err.response?.data?.message || err.message;
       }
-      setError(message
-        setError(response.data.message || "Failed to resend OTP");
-      }
-    } catch (err: any) {
-      setError(err.response?.data?.message || "Failed to resend OTP");
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -161,7 +167,7 @@ function OtpFormContent({
   );
 }
 
-export function OtpForm(props: OtpFormProps) {
+export function OtpForm(props: Readonly<OtpFormProps>) {
     return (
         <Suspense fallback={<div>Loading...</div>}>
             <OtpFormContent {...props} />

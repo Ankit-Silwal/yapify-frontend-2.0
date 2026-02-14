@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useState, Suspense } from "react"
+import { useState, Suspense, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import api from "@/lib/api"
 import { Eye, EyeOff } from "lucide-react"
@@ -23,7 +23,14 @@ function ResetPasswordFormContent({
 }: React.ComponentProps<"div">) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const email = searchParams.get("email") || "";
+  const [email, setEmail] = useState("");
+  const otp = searchParams.get("otp") || "";
+
+  useEffect(() => {
+    const emailFromParams = searchParams.get("email");
+    const emailFromStorage = sessionStorage.getItem("verification_email");
+    setEmail(emailFromParams || emailFromStorage || "");
+  }, [searchParams]);
   
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -52,6 +59,7 @@ function ResetPasswordFormContent({
     try {
       const response = await api.post("/auth/change-forgot-password", { 
         email, 
+        otp,
         password,
         conformPassword: confirmPassword 
       });

@@ -17,6 +17,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import api from "@/lib/api"
 import { isAxiosError } from "axios"
+import Link from "next/link"
 
 export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
   const router = useRouter();
@@ -48,7 +49,8 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
       if (res.data.success) {
         setSuccess(res.data.message || "Registration successful!");
         console.log("Registration success:", res.data);
-        router.push(`/signup/verify-otp?email=${encodeURIComponent(email)}`);
+        sessionStorage.setItem("verification_email", email);
+        router.push("/signup/verify-otp");
       } else {
         setError(res.data.message || "Registration failed");
       }
@@ -130,7 +132,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
             <Field>
               <Button type="submit" className="w-full">Create Account</Button>
               <div className="text-center text-sm mt-2">
-                Already have an account? <a href="/login" className="underline">Sign in</a>
+                Already have an account? <Link href="/login" className="underline">Sign in</Link>
               </div>
             </Field>
           </FieldGroup>

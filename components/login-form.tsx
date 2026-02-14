@@ -18,6 +18,7 @@ import { useState } from "react"
 import { Eye, EyeOff } from "lucide-react"
 import api from "@/lib/api"
 import { isAxiosError } from "axios"
+import Link from "next/link"
 
 
 export function LoginForm({
@@ -84,12 +85,12 @@ export function LoginForm({
               <Field>
                 <div className="flex items-center">
                   <FieldLabel htmlFor="password">Password</FieldLabel>
-                  <a
+                  <Link
                     href="/forgot-password"
                     className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
                   >
                     Forgot your password?
-                  </a>
+                  </Link>
                 </div>
                 <div className="relative">
                   <Input
@@ -126,7 +127,7 @@ export function LoginForm({
                   Login with Google
                 </Button>
                 <FieldDescription className="text-center">
-                  Don&apos;t have an account? <a href="#">Sign up</a>
+                  Don&apos;t have an account? <Link href="/signup">Sign up</Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>

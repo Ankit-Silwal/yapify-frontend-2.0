@@ -15,6 +15,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import api from "@/lib/api"
 import { isAxiosError } from "axios"
+import Link from "next/link"
 
 export function ForgotPasswordForm({
   className,
@@ -33,7 +34,8 @@ export function ForgotPasswordForm({
     try {
       const response = await api.post("/auth/forgot-password", { email });
       if (response.data.success || response.status === 200) {
-        router.push(`/forgot-password/verify-otp?email=${encodeURIComponent(email)}`);
+        sessionStorage.setItem("verification_email", email);
+        router.push("/forgot-password/verify-otp");
       } else {
         setError(response.data.message || "Request failed");
       }
@@ -79,9 +81,9 @@ export function ForgotPasswordForm({
             </Button>
             
             <div className="text-center text-sm">
-                <a href="/login" className="underline underline-offset-4 hover:text-primary">
+                <Link href="/login" className="underline underline-offset-4 hover:text-primary">
                     Back to Login
-                </a>
+                </Link>
             </div>
           </form>
         </CardContent>
