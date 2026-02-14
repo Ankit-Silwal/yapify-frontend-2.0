@@ -19,12 +19,14 @@ import { Eye, EyeOff } from "lucide-react"
 import api from "@/lib/api"
 import { isAxiosError } from "axios"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const router = useRouter();
   const [email,setEmail]=useState("");
   const [password,setPassword]=useState("");  
   const [showPassword, setShowPassword] = useState(false);
@@ -36,7 +38,8 @@ export function LoginForm({
     api.post("/auth/login", { email, password })
       .then((res) => {
         if (res.data.success) {
-          console.log("login now");
+          console.log("Login successful");
+          router.push("/dashboard");
         } else {
           console.log("Error message:", res.data.message);
           setError(res.data.message);
