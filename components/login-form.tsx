@@ -14,10 +14,10 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { addTransitionType, useState } from "react"
+import { useState } from "react"
 import { Eye, EyeOff } from "lucide-react"
 import api from "@/lib/api"
-import { emit } from "process"
+import { isAxiosError } from "axios"
 
 
 export function LoginForm({
@@ -29,7 +29,7 @@ export function LoginForm({
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
     api.post("/auth/login", { email, password })
@@ -45,12 +45,13 @@ export function LoginForm({
       .catch((error) => {
         console.log("Cannot login:", error);
         
-        const errorMessage = 
-          error.response?.data?.message || 
-          error.response?.data?.error || 
-          error.message || 
-          "Something went wrong";
-          
+        let errorMessage = "Something went wrong";
+        if (isAxiosError(error)) {
+           errorMessage = error.response?.data?.message || error.message;
+        } else if (error instanceof Error) {
+            errorMessage = error.message;
+        }
+
         console.log("Extracted error message:", errorMessage);
         setError(errorMessage);
         setTimeout(() => setError(""), 3000);
@@ -84,7 +85,7 @@ export function LoginForm({
                 <div className="flex items-center">
                   <FieldLabel htmlFor="password">Password</FieldLabel>
                   <a
-                    href="#"
+                    href="/forgot-password"
                     className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
                   >
                     Forgot your password?

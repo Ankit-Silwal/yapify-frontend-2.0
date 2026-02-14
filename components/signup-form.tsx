@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import api from "@/lib/api"
+import { isAxiosError } from "axios"
 
 export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
   const router = useRouter();
@@ -26,7 +27,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  const handleRegister = async (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     setSuccess("");
@@ -47,18 +48,17 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
       if (res.data.success) {
         setSuccess(res.data.message || "Registration successful!");
         console.log("Registration success:", res.data);
-        router.push("/signup/verify-otp");
+        router.push(`/signup/verify-otp?email=${encodeURIComponent(email)}`);
       } else {
         setError(res.data.message || "Registration failed");
       }
-    } catch (error:any) {
+    } catch (error) {
       console.log("Registration error:", error);
-      const errorMessage =
-        error.response?.data?.message ||
-        error.response?.data?.error ||
-        error.message ||
-        "Something went wrong";
-      setError(errorMessage);
+      let message = "Something went wrong";
+      if (isAxiosError(error)) {
+        message = error.response?.data?.message || error.message;
+      }
+      setError(message);
     }
   };
   return (
