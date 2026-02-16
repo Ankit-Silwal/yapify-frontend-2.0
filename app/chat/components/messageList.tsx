@@ -1,7 +1,8 @@
 import MessageBubble from "./messageBubble"
 
 
-export default function MessageList({ messages, currentUserId }: { messages: any[], currentUserId: string }) {
+export default function MessageList({ messages = [], currentUserId }: { messages: any[], currentUserId: string }) {
+  if (!messages) return null; // Safer check
   return (
     <div className="flex-1 overflow-y-auto p-4 space-y-3">
       {messages.map((msg)=>(

@@ -6,15 +6,18 @@ import ChatHeader from "../components/chatHeader"
 import MessageList from "../components/messageList"
 import ChatInput from "../components/chatInput"
 import { useParams } from "next/navigation";
+import { useAuth } from "@/context/auth-context";
+
 export default function ConversationPage() {
   const {conversationId}=useParams()
+  const { user } = useAuth();
   const [messages,setMessages]=useState([])
   const [loading,setLoading]=useState(true);
   useEffect(()=>{
     const fetchMessage=async ()=>{
       try{
         const res=await api.get(`/conversations/${conversationId}/messages?page=1&limit=20`)
-        setMessages(res.data.content);
+        setMessages(Array.isArray(res.data) ? res.data : []); // Ensure array
       }catch(error){
         console.log(error);
       }finally{
@@ -56,8 +59,8 @@ export default function ConversationPage() {
   return (
     <div className="flex h-full flex-col">
       <ChatHeader />
-      <MessageList />
-      <ChatInput />
+      <MessageList messages={messages} currentUserId={user?.id || ""} />
+      <ChatInput onSend={handleSendMessage}/>
     </div>
   )
 }
