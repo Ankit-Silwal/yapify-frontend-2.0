@@ -16,7 +16,8 @@ export default function ConversationPage() {
   useEffect(()=>{
     const fetchMessage=async ()=>{
       try{
-        const res=await api.get(`/conversations/${conversationId}/messages?page=1&limit=20`)
+        const res=await api.get(`/conversation/${conversationId}`)
+        console.log("Fetched message:",res.data);
         setMessages(Array.isArray(res.data) ? res.data : []); // Ensure array
       }catch(error){
         console.log(error);
@@ -41,6 +42,7 @@ export default function ConversationPage() {
       socket.off("new-message", handleNewMessage);
     };
   }, [conversationId]);
+  
   const handleSendMessage = (content: string) => {
     const socket = getSocket()
 
