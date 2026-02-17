@@ -13,6 +13,20 @@ export default function ConversationPage() {
   const { user } = useAuth();
   const [messages,setMessages]=useState([])
   const [loading,setLoading]=useState(true);
+  const [conversationInfo, setConversationInfo] = useState<any>(null)
+  useEffect(() => {
+  const fetchConversation = async () => {
+    try {
+      const res = await api.get(`/conversation/${conversationId}/details`)
+      setConversationInfo(res.data)
+    } catch (error) {
+      console.error("Conversation fetch error:", error)
+    }
+  }
+
+  fetchConversation()
+}, [conversationId])
+
   useEffect(()=>{
     const fetchMessage=async ()=>{
       try{
@@ -60,7 +74,9 @@ export default function ConversationPage() {
   }
   return (
     <div className="flex h-full flex-col">
-      <ChatHeader />
+      <ChatHeader username={conversationInfo?.other_user?.username}
+/>
+
       <MessageList messages={messages} currentUserId={user?.id || ""} />
       <ChatInput onSend={handleSendMessage}/>
     </div>
