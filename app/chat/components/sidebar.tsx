@@ -1,6 +1,6 @@
 "use client"
 import { useState } from "react"
-import { useRouter } from "next/router"
+import { useRouter } from "next/navigation"
 import api from "@/lib/api"
 type user={
   id:string,
@@ -34,7 +34,7 @@ export default function Sidebar() {
         targetUserId
       });
       const conversationId=res.data.conversationId;
-      router.push('/chat/${conversationId}')
+      router.push(`/chat/${conversationId}`)
       setSearch("");
       setUsers([]);
     }catch(error){
